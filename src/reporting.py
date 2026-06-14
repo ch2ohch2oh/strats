@@ -33,13 +33,19 @@ CHARTS = [
 def format_summary(summary: pd.DataFrame) -> pd.DataFrame:
     formatted = summary.copy()
     for column in PERCENT_COLUMNS:
-        formatted[column] = formatted[column].map(lambda value: f"{value:.2%}")
+        if column in formatted.columns:
+            formatted[column] = formatted[column].map(lambda value: f"{value:.2%}")
     for column in RATIO_COLUMNS:
-        formatted[column] = formatted[column].map(lambda value: f"{value:.2f}")
-    formatted["Number of Trades"] = formatted["Number of Trades"].astype(int)
-    formatted["Final Portfolio Value"] = formatted["Final Portfolio Value"].map(
-        lambda value: f"${value:,.0f}"
-    )
+        if column in formatted.columns:
+            formatted[column] = formatted[column].map(lambda value: f"{value:.2f}")
+    if "Number of Trades" in formatted.columns:
+        formatted["Number of Trades"] = formatted["Number of Trades"].astype(int)
+    if "Final Portfolio Value" in formatted.columns:
+        formatted["Final Portfolio Value"] = formatted["Final Portfolio Value"].map(
+            lambda value: f"${value:,.0f}"
+        )
+    if "BeatsQQQ" in formatted.columns:
+        formatted["BeatsQQQ"] = formatted["BeatsQQQ"].map(lambda v: "✓" if v else "✗")
     return formatted
 
 

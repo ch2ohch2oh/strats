@@ -239,7 +239,13 @@ exceptional walk-forward stability. The tradeoff is slightly lower CAGR versus t
 <li>Taxes, market impact, ETF survivorship, execution differences, and research-selection bias are excluded.</li>
 <li>US technology equities performed unusually strongly during much of the available history.</li>
 <li>The Mag7 study uses today's membership throughout history and therefore has severe survivorship and hindsight bias.</li>
-</ul></section>
+</ul>
+<p class="muted">Every backtest satisfies the project's backtest requirements: signals use only
+pre-trade data, in-sample and out-of-sample periods are separated, parameter
+sensitivity is tested, rolling performance is charted, failure cases are
+documented, and strategies whose results depend on one lucky period, one exact
+parameter, or unrealistic assumptions are rejected. See README for the full
+methodological standards.</p></section>
 
 <section><h2>Supporting Artifacts</h2><ul>
 <li><a href="results.csv">Baseline results CSV</a></li>

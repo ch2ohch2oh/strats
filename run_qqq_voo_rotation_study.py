@@ -38,7 +38,7 @@ def main() -> None:
 
     results = align_results(
         {
-            name: run_portfolio(prices, weight_function(prices))
+            name: run_portfolio(prices, weight_function(prices), name=name)
             for name, weight_function in STRATEGIES.items()
         }
     )

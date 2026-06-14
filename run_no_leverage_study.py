@@ -83,7 +83,7 @@ def main() -> None:
 
     fixed_results = align_results(
         {
-            name: run_portfolio(prices, weight_function(prices))
+            name: run_portfolio(prices, weight_function(prices), name=name)
             for name, weight_function in fixed_functions.items()
         }
     )
@@ -95,7 +95,7 @@ def main() -> None:
     for name, weight_function in fixed_functions.items():
         weights = weight_function(prices)
         weights.loc[weights.index.year < 2016] = float("nan")
-        fixed_oos_raw[name] = run_portfolio(prices, weights)
+        fixed_oos_raw[name] = run_portfolio(prices, weights, name=name)
     fixed_oos_results = align_results(fixed_oos_raw)
     fixed_oos_summary = build_summary(fixed_oos_results)
     fixed_oos_summary.to_csv(output_dir / "fixed_2016_onward_results.csv")

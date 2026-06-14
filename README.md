@@ -1,7 +1,56 @@
 # Systematic ETF Strategy Backtest
 
-This project compares three long-only systematic investing strategies with QQQ
+This project compares long-only systematic investing strategies with QQQ
 buy-and-hold, emphasizing risk-adjusted performance.
+
+## Constraints
+
+Every strategy in this project must satisfy all of the following rules:
+
+1. **Long-only** — weights are always between 0% and 100%. No negative positions.
+2. **No shorting** — no strategy may profit from declining asset prices.
+3. **No options** — all positions use spot ETFs only. No derivatives of any kind.
+4. **No leverage** — cash held in BIL does not count as leverage. Position weights
+   must sum to 100% at all times, and no position may exceed 100% of portfolio value.
+5. **QQQ benchmark** — every study must include QQQ buy-and-hold as the reference.
+6. **Risk-adjusted superiority** — a strategy must beat QQQ on risk-adjusted
+   metrics (Sharpe, Sortino, Calmar, or drawdown), not just on total return. A
+   strategy that only matches or trails QQQ's total return without improving risk
+   is not considered a viable alternative.
+
+## Backtest Requirements
+
+Every backtest in this project must satisfy the following methodological standards:
+
+1. **Use only data available before each trade** — signals are computed on close
+   prices and applied to the next trading day's return. Walk-forward tests select
+   parameters using only prior data. No future information may leak into any
+   signal, parameter choice, or performance evaluation.
+
+2. **Separate in-sample and out-of-sample periods** — full-history results are
+   diagnostic. The fixed 2016-onward window and annual walk-forward selection
+   are the primary out-of-sample evidence. A strategy that only works in-sample
+   is not considered viable.
+
+3. **Test parameter sensitivity** — the optimization study ranks candidates by
+   subperiod stability (median fold Sharpe minus 0.5×std). A strategy whose
+   performance collapses under small parameter changes is not robust enough to
+   act on.
+
+4. **Show rolling performance over time** — all reports include equity curves,
+   drawdown charts, rolling 12-month returns, and yearly return bar charts to
+   reveal whether outperformance is concentrated in a single period.
+
+5. **Explain when the strategy fails** — each report documents periods of
+   underperformance, the conditions that caused it, and why a reasonable
+   investor might abandon the strategy at the worst possible time.
+
+6. **Reject fragile results** — a strategy is rejected if its apparent success
+   depends on:
+   - one lucky subperiod (isolated outperformance in a single fold or year)
+   - one exact parameter value (sharp performance drop at adjacent settings)
+   - unrealistic assumptions (survivorship bias, hindsight bias, zero costs,
+     perfect execution, or data unavailable at trade time)
 
 ## Strategies
 

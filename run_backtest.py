@@ -32,7 +32,7 @@ def main() -> None:
 
     prices = load_prices(TICKERS, start="2011-01-01", refresh=args.refresh)
     raw_results = {
-        name: run_portfolio(prices, weight_function(prices))
+        name: run_portfolio(prices, weight_function(prices), name=name)
         for name, weight_function in STRATEGY_NAMES.items()
     }
     results = align_results(raw_results)

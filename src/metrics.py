@@ -41,8 +41,32 @@ def calculate_metrics(
     }
 
 
+RISK_COLUMNS = ["Sharpe Ratio", "Sortino Ratio", "Calmar Ratio", "Max Drawdown"]
+
+
+def qqq_comparison(summary: pd.DataFrame) -> pd.DataFrame:
+    """Annotate summary with whether each strategy beats QQQ on risk-adjusted metrics.
+
+    A strategy must improve at least one risk column relative to QQQ Buy & Hold
+    to be considered viable. A pure return chase without risk improvement is flagged.
+    """
+    if "QQQ Buy & Hold" not in summary.index:
+        return summary
+    qqq = summary.loc["QQQ Buy & Hold"]
+    beats = pd.Series(False, index=summary.index, dtype=bool)
+    for col in RISK_COLUMNS:
+        if col == "Max Drawdown":
+            beats |= summary[col] > qqq[col]
+        else:
+            beats |= summary[col] > qqq[col]
+    beats["QQQ Buy & Hold"] = True
+    summary = summary.assign(BeatsQQQ=beats)
+    return summary
+
+
 def build_summary(results: dict[str, BacktestResult]) -> pd.DataFrame:
     summary = pd.DataFrame(
         {name: calculate_metrics(result) for name, result in results.items()}
     ).T
-    return summary.sort_values("Sharpe Ratio", ascending=False)
+    summary = summary.sort_values("Sharpe Ratio", ascending=False)
+    return qqq_comparison(summary)

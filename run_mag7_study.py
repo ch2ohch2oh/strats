@@ -47,8 +47,8 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     raw_results = {
-        name: run_portfolio(prices, weight_function(prices))
-        for name, weight_function in STRATEGIES.items()
+        name: run_portfolio(prices, weight_function(prices), name=name)
+        for name, weight_function in MAG7_STRATEGIES.items()
     }
     results = align_results(raw_results)
     summary = build_summary(results)
@@ -59,7 +59,7 @@ def main() -> None:
     for name, result in raw_results.items():
         weights = result.weights.copy()
         weights.loc[weights.index.year < 2016] = float("nan")
-        fixed_2016_raw[name] = run_portfolio(prices, weights)
+        fixed_2016_raw[name] = run_portfolio(prices, weights, name=name)
     fixed_2016_results = align_results(fixed_2016_raw)
     fixed_2016_summary = build_summary(fixed_2016_results)
     fixed_2016_summary.to_csv(output_dir / "fixed_2016_onward_results.csv")
@@ -78,7 +78,7 @@ def main() -> None:
                     breadth_threshold=breadth_threshold,
                 )
                 weights.loc[weights.index.year < 2016] = float("nan")
-                result = run_portfolio(prices, weights)
+                result = run_portfolio(prices, weights, name=f"Top{top_n}_Br{breadth_threshold}_Sl{stock_sleeve}")
                 metrics = build_summary({"variant": result}).iloc[0].to_dict()
                 robustness_rows.append(
                     {
