@@ -97,3 +97,32 @@ Over the exact 2016-2026 comparison window:
 The 50% ensemble floor currently offers the closest no-leverage approach to
 QQQ-like CAGR while retaining substantial and consistent risk reduction. It
 still trails QQQ by roughly 1.5 percentage points of CAGR in this window.
+
+## QQQ / VOO Rotation Follow-Up
+
+Monthly rotation between QQQ and VOO was tested using 126-day relative
+momentum, combined 126/252-day momentum, return divided by realized volatility,
+a QQQ leadership-plus-trend filter, and a 75/25 blended allocation.
+
+The conclusion is that rotation improves on VOO and reduces QQQ drawdowns, but
+does not improve on the 50% QQQ-floor trend ensemble on a risk-adjusted basis.
+QQQ and VOO daily returns had a 0.93 correlation from 2016 onward:
+
+- Dual-horizon QQQ/VOO momentum produced the highest rotation CAGR at 18.95%,
+  with 19.17% volatility, a 1.00 Sharpe, and a -28.56% maximum drawdown.
+- Risk-adjusted QQQ/VOO momentum produced the highest rotation Sharpe at 1.03,
+  with 18.50% CAGR and a -28.56% maximum drawdown.
+- The 50% QQQ-floor trend ensemble produced a 1.07 Sharpe and a -25.52%
+  maximum drawdown over the rotation study's common period.
+
+Over the exact 2016-2026 comparison window:
+
+- Dual-horizon momentum produced 19.26% CAGR, 20.59% volatility, a 0.96
+  Sharpe, and a -28.56% maximum drawdown.
+- The 50% QQQ-floor trend ensemble produced 18.89% CAGR, 17.91% volatility, a
+  1.06 Sharpe, and a -25.52% maximum drawdown.
+- QQQ produced 20.43% CAGR, 22.25% volatility, a 0.95 Sharpe, and a -35.12%
+  maximum drawdown.
+
+Because QQQ and VOO share broad US large-cap exposure, switching between them
+changes concentration more than it changes the underlying equity-market risk.

@@ -19,50 +19,32 @@ buy-and-hold, emphasizing risk-adjusted performance.
 
 ```bash
 uv sync
+uv run python run_all_studies.py
+```
+
+The primary deliverable is the consolidated `output/master_report.html`.
+Use `uv run python run_backtest.py --refresh` first when price data should be
+redownloaded.
+
+Individual study commands remain available for focused iteration:
+
+```bash
 uv run python run_backtest.py
-```
-
-Use `uv run python run_backtest.py --refresh` to ignore the local
-`data/prices.csv` cache and redownload data.
-
-Run the coarse-grid robustness analysis separately:
-
-```bash
 uv run python optimize_strategies.py
-```
-
-This writes strategy-specific optimization CSVs and
-`output/optimization_report.html`. Candidates are ranked using stable Sharpe
-ratios across three chronological subperiods, rather than full-period Sharpe
-alone. This still uses historical data and should not be treated as a true
-out-of-sample result.
-
-Run the stronger expanding-window walk-forward study:
-
-```bash
 uv run python run_walk_forward.py
-```
-
-At each year-end, this selects parameters using only prior data and applies
-them unchanged throughout the following year. Results and annual parameter
-selections are written to `output/walk_forward_report.html` and CSV files.
-
-Run the follow-up no-leverage study:
-
-```bash
 uv run python run_no_leverage_study.py
+uv run python run_qqq_voo_rotation_study.py
+uv run python generate_master_report.py
 ```
 
-This compares partial trend de-risking and multi-horizon trend ensembles using
-both full-sample and walk-forward tests. Existing baseline reports are not
-overwritten. Findings and rationale are preserved in `RESEARCH_FINDINGS.md`.
+Detailed reports and CSV files remain available for audit. Findings and
+rationale are preserved in `RESEARCH_FINDINGS.md`.
 
 Dependencies are declared in `pyproject.toml` and pinned in `uv.lock`.
 `requirements.txt` is retained for compatibility with non-uv environments.
 
-Results are written to `output/results.csv`; four comparison charts and a
-self-contained `output/report.html` report are also generated. The report
-includes strategy definitions, metrics, methodology, and embedded charts.
+The master report includes the strategy definitions, key metrics, methodology,
+optimization caveats, walk-forward evidence, and no-leverage conclusions.
 
 ## Assumptions and limitations
 

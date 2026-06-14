@@ -17,6 +17,12 @@ def benchmark_weights(prices: pd.DataFrame) -> pd.DataFrame:
     return _apply_next_day(desired)
 
 
+def voo_benchmark_weights(prices: pd.DataFrame) -> pd.DataFrame:
+    desired = pd.DataFrame(0.0, index=prices.index, columns=prices.columns)
+    desired["VOO"] = 1.0
+    return _apply_next_day(desired)
+
+
 def trend_following_weights(prices: pd.DataFrame, sma_days: int = 200) -> pd.DataFrame:
     sma = prices["QQQ"].rolling(sma_days).mean()
     signal = prices["QQQ"] > sma
@@ -68,6 +74,97 @@ def trend_ensemble_weights(
     desired.loc[valid, :] = 0.0
     desired.loc[valid, "QQQ"] = qqq_weight.loc[valid]
     desired.loc[valid, "BIL"] = 1.0 - qqq_weight.loc[valid]
+    return _apply_next_day(desired)
+
+
+def qqq_voo_relative_momentum_weights(
+    prices: pd.DataFrame,
+    lookback_days: int = 126,
+) -> pd.DataFrame:
+    trailing_return = prices[["QQQ", "VOO"]] / prices[["QQQ", "VOO"]].shift(lookback_days) - 1.0
+    month_ends = prices.groupby(prices.index.to_period("M")).tail(1).index
+    desired = _empty_weights(prices)
+    valid_dates = month_ends.intersection(trailing_return.dropna().index)
+
+    for date in valid_dates:
+        selected = trailing_return.loc[date].idxmax()
+        desired.loc[date, :] = 0.0
+        desired.loc[date, selected] = 1.0
+    return _apply_next_day(desired)
+
+
+def qqq_voo_dual_horizon_weights(prices: pd.DataFrame) -> pd.DataFrame:
+    six_month = prices[["QQQ", "VOO"]] / prices[["QQQ", "VOO"]].shift(126) - 1.0
+    twelve_month = prices[["QQQ", "VOO"]] / prices[["QQQ", "VOO"]].shift(252) - 1.0
+    score = (six_month + twelve_month) / 2.0
+    month_ends = prices.groupby(prices.index.to_period("M")).tail(1).index
+    desired = _empty_weights(prices)
+    valid_dates = month_ends.intersection(score.dropna().index)
+
+    for date in valid_dates:
+        selected = score.loc[date].idxmax()
+        desired.loc[date, :] = 0.0
+        desired.loc[date, selected] = 1.0
+    return _apply_next_day(desired)
+
+
+def qqq_voo_risk_adjusted_momentum_weights(
+    prices: pd.DataFrame,
+    return_lookback_days: int = 126,
+    volatility_lookback_days: int = 63,
+) -> pd.DataFrame:
+    assets = ["QQQ", "VOO"]
+    trailing_return = prices[assets] / prices[assets].shift(return_lookback_days) - 1.0
+    realized_vol = prices[assets].pct_change().rolling(volatility_lookback_days).std() * np.sqrt(252)
+    score = trailing_return / realized_vol
+    month_ends = prices.groupby(prices.index.to_period("M")).tail(1).index
+    desired = _empty_weights(prices)
+    valid_dates = month_ends.intersection(score.dropna().index)
+
+    for date in valid_dates:
+        selected = score.loc[date].idxmax()
+        desired.loc[date, :] = 0.0
+        desired.loc[date, selected] = 1.0
+    return _apply_next_day(desired)
+
+
+def qqq_leadership_filter_weights(
+    prices: pd.DataFrame,
+    momentum_lookback_days: int = 126,
+    sma_days: int = 200,
+) -> pd.DataFrame:
+    qqq_return = prices["QQQ"] / prices["QQQ"].shift(momentum_lookback_days) - 1.0
+    voo_return = prices["VOO"] / prices["VOO"].shift(momentum_lookback_days) - 1.0
+    qqq_sma = prices["QQQ"].rolling(sma_days).mean()
+    qqq_leads = (qqq_return > voo_return) & (prices["QQQ"] > qqq_sma)
+    valid = qqq_return.notna() & voo_return.notna() & qqq_sma.notna()
+    month_ends = prices.groupby(prices.index.to_period("M")).tail(1).index
+    valid_dates = month_ends.intersection(prices.index[valid])
+
+    desired = _empty_weights(prices)
+    desired.loc[valid_dates, :] = 0.0
+    desired.loc[valid_dates, "VOO"] = 1.0
+    desired.loc[valid_dates[qqq_leads.loc[valid_dates]], "QQQ"] = 1.0
+    desired.loc[valid_dates[qqq_leads.loc[valid_dates]], "VOO"] = 0.0
+    return _apply_next_day(desired)
+
+
+def qqq_voo_blended_momentum_weights(
+    prices: pd.DataFrame,
+    lookback_days: int = 126,
+    leader_weight: float = 0.75,
+) -> pd.DataFrame:
+    trailing_return = prices[["QQQ", "VOO"]] / prices[["QQQ", "VOO"]].shift(lookback_days) - 1.0
+    month_ends = prices.groupby(prices.index.to_period("M")).tail(1).index
+    desired = _empty_weights(prices)
+    valid_dates = month_ends.intersection(trailing_return.dropna().index)
+
+    for date in valid_dates:
+        leader = trailing_return.loc[date].idxmax()
+        laggard = "VOO" if leader == "QQQ" else "QQQ"
+        desired.loc[date, :] = 0.0
+        desired.loc[date, leader] = leader_weight
+        desired.loc[date, laggard] = 1.0 - leader_weight
     return _apply_next_day(desired)
 
 
