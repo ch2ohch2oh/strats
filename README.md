@@ -14,6 +14,9 @@ buy-and-hold, emphasizing risk-adjusted performance.
 - **Dual Momentum:** monthly selection among QQQ, VOO, VGT, BIL, IAU, and TLT
   using trailing 126-trading-day total return and the specified BIL hurdle.
 - **Benchmark:** QQQ buy-and-hold.
+- **Dynamic Mag7 leadership study:** exploratory stock-level momentum, trend,
+  breadth, and inverse-volatility allocation. This study uses today's Mag7
+  membership historically and is explicitly labeled as survivorship-biased.
 
 ## Run
 
@@ -34,6 +37,7 @@ uv run python optimize_strategies.py
 uv run python run_walk_forward.py
 uv run python run_no_leverage_study.py
 uv run python run_qqq_voo_rotation_study.py
+uv run python run_mag7_study.py
 uv run python generate_master_report.py
 ```
 

@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Strategy Parameter Optimization</title>
+  <style>
+    body { margin: 0; background: #f4f7fb; color: #172033; font: 15px/1.5 system-ui, sans-serif; }
+    main { max-width: 1600px; margin: auto; padding: 32px 24px 56px; }
+    section { margin: 20px 0; padding: 20px; overflow-x: auto; background: white; border: 1px solid #dce2ea; border-radius: 12px; }
+    table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+    th, td { padding: 8px 10px; border-bottom: 1px solid #dce2ea; text-align: right; }
+    th { background: #eef3fa; font-size: 12px; }
+    th:first-child, td:first-child { text-align: left; }
+    .warning { padding: 16px; border-left: 4px solid #c47a00; background: #fff8e8; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Strategy Parameter Optimization</h1>
+  <p class="warning"><strong>Important:</strong> These rankings are robustness checks, not proof of future
+  performance. Every parameter was evaluated on historical data. Prefer broad plateaus of similar results
+  and simple parameters over an isolated winner.</p>
+  <p><strong>Robust Score</strong> = median Sharpe across three chronological subperiods minus
+  0.5 times the standard deviation of those Sharpes. Candidates within each strategy use identical
+  evaluation dates.</p>
+  <section><h2>Trend Following</h2><p>Top 10 candidates ranked by stability-adjusted subperiod Sharpe.</p><table class="dataframe results">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Candidate</th>
+      <th>SMA Days</th>
+      <th>Baseline</th>
+      <th>Robust Score</th>
+      <th>Full Sharpe</th>
+      <th>Full CAGR</th>
+      <th>Full Max Drawdown</th>
+      <th>Full Annual Turnover</th>
+      <th>Worst Fold Sharpe</th>
+      <th>Median Fold Sharpe</th>
+      <th>Fold Sharpe Std</th>
+      <th>Evaluation Start</th>
+      <th>Evaluation End</th>
+      <th>Fold 1 Sharpe</th>
+      <th>Fold 1 CAGR</th>
+      <th>Fold 2 Sharpe</th>
+      <th>Fold 2 CAGR</th>
+      <th>Fold 3 Sharpe</th>
+      <th>Fold 3 CAGR</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>SMA 200</td>
+      <td>200</td>
+      <td>True</td>
+      <td>0.93</td>
+      <td>1.00</td>
+      <td>15.59%</td>
+      <td>-22.27%</td>
+      <td>935.16%</td>
+      <td>0.79</td>
+      <td>1.01</td>
+      <td>0.16</td>
+      <td>2012-03-13</td>
+      <td>2026-06-12</td>
+      <td>0.79</td>
+      <td>0.101704</td>
+      <td>1.17</td>
+      <td>0.214780</td>
+      <td>1.01</td>
+      <td>0.153753</td>
+    </tr>
+    <tr>
+      <td>SMA 150</td>
+      <td>150</td>
+      <td>False</td>
+      <td>0.93</td>
+      <td>1.03</td>
+      <td>15.77%</td>
+      <td>-21.99%</td>
+      <td>1216.41%</td>
+      <td>0.69</td>
+      <td>1.05</td>
+      <td>0.25</td>
+      <td>2012-03-13</td>
+      <td>2026-06-12</td>
+      <td>0.69</td>
+      <td>0.084333</td>
+      <td>1.29</td>
+      <td>0.236274</td>
+      <td>1.05</td>
+      <td>0.157417</td>
+    </tr>
+    <tr>
+      <td>SMA 300</td>
+      <td>300</td>
+      <td>False</td>
+      <td>0.81</td>
+      <td>0.84</td>
+      <td>13.52%</td>
+      <td>-37.17%</td>
+      <td>850.78%</td>
+      <td>0.76</td>
+      <td>0.84</td>
+      <td>0.06</td>
+      <td>2012-03-13</td>
+      <td>2026-06-12</td>
+      <td>0.76</td>
+      <td>0.100375</td>
+      <td>0.91</td>
+      <td>0.175783</td>
+      <td>0.84</td>
+      <td>0.130532</td>
+    </tr>
+    <tr>
+      <td>SMA 100</td>
+      <td>100</td>
+      <td>False</td>
+      <td>0.78</td>
+      <td>0.75</td>
+      <td>10.34%</td>
+      <td>-22.88%</td>
+      <td>2257.03%</td>
+      <td>0.35</td>
+      <td>0.91</td>
+      <td>0.27</td>
+      <td>2012-03-13</td>
+      <td>2026-06-12</td>
+      <td>0.35</td>
+      <td>0.035720</td>
+      <td>0.91</td>
+      <td>0.142819</td>
+      <td>0.92</td>
+      <td>0.134838</td>
+    </tr>
+    <tr>
+      <td>SMA 250</td>
+      <td>250</td>
+      <td>False</td>
+      <td>0.71</td>
+      <td>0.96</td>
+      <td>15.08%</td>
+      <td>-26.41%</td>
+      <td>991.41%</td>
+      <td>0.75</td>
+      <td>0.82</td>
+      <td>0.22</td>
+      <td>2012-03-13</td>
+      <td>2026-06-12</td>
+      <td>0.75</td>
+      <td>0.097625</td>
+      <td>1.25</td>
+      <td>0.235390</td>
+      <td>0.82</td>
+      <td>0.123944</td>
+    </tr>
+  </tbody>
+</table></section><section><h2>Volatility Targeting</h2><p>Top 10 candidates ranked by stability-adjusted subperiod Sharpe.</p><table class="dataframe results">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Candidate</th>
+      <th>Lookback Days</th>
+      <th>Target Volatility</th>
+      <th>Baseline</th>
+      <th>Robust Score</th>
+      <th>Full Sharpe</th>
+      <th>Full CAGR</th>
+      <th>Full Max Drawdown</th>
+      <th>Full Annual Turnover</th>
+      <th>Worst Fold Sharpe</th>
+      <th>Median Fold Sharpe</th>
+      <th>Fold Sharpe Std</th>
+      <th>Evaluation Start</th>
+      <th>Evaluation End</th>
+      <th>Fold 1 Sharpe</th>
+      <th>Fold 1 CAGR</th>
+      <th>Fold 2 Sharpe</th>
+      <th>Fold 2 CAGR</th>
+      <th>Fold 3 Sharpe</th>
+      <th>Fold 3 CAGR</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Lookback 21, Target 10%</td>
+      <td>21</td>
+      <td>0.10</td>
+      <td>False</td>
+      <td>1.08</td>
+      <td>1.07</td>
+      <td>12.56%</td>
+      <td>-14.39%</td>
+      <td>458.19%</td>
+      <td>0.91</td>
+      <td>1.14</td>
+      <td>0.11</td>
+      <td>2011-08-01</td>
+      <td>2026-06-12</td>
+      <td>0.91</td>
+      <td>0.102748</td>
+      <td>1.16</td>
+      <td>0.147174</td>
+      <td>1.14</td>
+      <td>0.127170</td>
+    </tr>
+    <tr>
+      <td>Lookback 21, Target 12%</td>
+      <td>21</td>
+      <td>0.12</td>
+      <td>False</td>
+      <td>1.05</td>
+      <td>1.06</td>
+      <td>14.20%</td>
+      <td>-17.13%</td>
+      <td>415.04%</td>
+      <td>0.93</td>
+      <td>1.09</td>
+      <td>0.09</td>
+      <td>2011-08-01</td>
+      <td>2026-06-12</td>
+      <td>0.93</td>
+      <td>0.119355</td>
+      <td>1.15</td>
+      <td>0.163807</td>
+      <td>1.09</td>
+      <td>0.143249</td>
+    </tr>
+    <tr>
+      <td>Lookback 42, Target 10%</td>
+      <td>42</td>
+      <td>0.10</td>
+      <td>False</td>
+      <td>1.01</td>
+      <td>1.02</td>
+      <td>11.76%</td>
+      <td>-17.70%</td>
+      <td>275.25%</td>
+      <td>0.91</td>
+      <td>1.05</td>
+      <td>0.08</td>
+      <td>2011-08-01</td>
+      <td>2026-06-12</td>
+      <td>0.91</td>
+      <td>0.099688</td>
+      <td>1.09</td>
+      <td>0.136921</td>
+      <td>1.05</td>
+      <td>0.116363</td>
+    </tr>
+    <tr>
+      <td>Lookback 63, Target 10%</td>
+      <td>63</td>
+      <td>0.10</td>
+      <td>False</td>
+      <td>0.99</td>
+      <td>0.99</td>
+      <td>11.36%</td>
+      <td>-20.28%</td>
+      <td>212.57%</td>
+      <td>0.88</td>
+      <td>1.03</td>
+      <td>0.08</td>
+      <td>2011-08-01</td>
+      <td>2026-06-12</td>
+      <td>0.88</td>
+      <td>0.095093</td>
+      <td>1.03</td>
+      <td>0.130108</td>
+      <td>1.05</td>
+      <td>0.115905</td>
+    </tr>
+    <tr>
+      <td>Lookback 21, Target 15%</td>
+      <td>21</td>
+      <td>0.15</td>
+      <td>False</td>
+      <td>0.99</td>
+      <td>1.05</td>
+      <td>16.13%</td>
+      <td>-21.11%</td>
+      <td>312.91%</td>
+      <td>0.94</td>
+      <td>1.04</td>
+      <td>0.09</td>
+      <td>2011-08-01</td>
+      <td>2026-06-12</td>
+      <td>0.94</td>
+      <td>0.136092</td>
+      <td>1.17</td>
+      <td>0.187220</td>
+      <td>1.04</td>
+      <td>0.161131</td>
+    </tr>
+    <tr>
+      <td>Lookback 63, Target 12%</td>
+      <td>63</td>
+      <td>0.12</td>
+      <td>False</td>
+      <td>0.97</td>
+      <td>0.97</td>
+      <td>13.01%</td>
+      <td>-22.67%</td>
+      <td>214.11%</td>
+      <td>0.87</td>
+      <td>1.01</td>
+      <td>0.07</td>
+      <td>2011-08-01</td>
+      <td>2026-06-12</td>
+      <td>0.87</td>
+      <td>0.110557</td>
+      <td>1.02</td>
+      <td>0.148189</td>
+      <td>1.01</td>
+      <td>0.131783</td>
+    </tr>
+    <tr>
+      <td>Lookback 42, Target 12%</td>
+      <td>42</td>
+      <td>0.12</td>
+      <td>False</td>
+      <td>0.97</td>
+      <td>1.00</td>
+      <td>13.36%</td>
+      <td>-21.01%</td>
+      <td>271.44%</td>
+      <td>0.89</td>
+      <td>1.01</td>
+      <td>0.08</td>
+      <td>2011-08-01</td>
+      <td>2026-06-12</td>
+      <td>0.89</td>
+      <td>0.112895</td>
+      <td>1.09</td>
+      <td>0.155441</td>
+      <td>1.01</td>
+      <td>0.132681</td>
+    </tr>
+    <tr>
+      <td>Lookback 21, Target 18%</td>
+      <td>21</td>
+      <td>0.18</td>
+      <td>False</td>
+      <td>0.93</td>
+      <td>1.04</td>
+      <td>17.42%</td>
+      <td>-24.11%</td>
+      <td>228.20%</td>
+      <td>0.95</td>
+      <td>0.98</td>
+      <td>0.10</td>
+      <td>2011-08-01</td>
+      <td>2026-06-12</td>
+      <td>0.95</td>
+      <td>0.147779</td>
+      <td>1.18</td>
+      <td>0.207104</td>
+      <td>0.98</td>
+      <td>0.168412</td>
+    </tr>
+    <tr>
+      <td>Lookback 63, Target 15%</td>
+      <td>63</td>
+      <td>0.15</td>
+      <td>True</td>
+      <td>0.91</td>
+      <td>0.95</td>
+      <td>14.95%</td>
+      <td>-25.14%</td>
+      <td>171.39%</td>
+      <td>0.88</td>
+      <td>0.94</td>
+      <td>0.06</td>
+      <td>2011-08-01</td>
+      <td>2026-06-12</td>
+      <td>0.88</td>
+      <td>0.128370</td>
+      <td>1.03</td>
+      <td>0.172425</td>
+      <td>0.94</td>
+      <td>0.147905</td>
+    </tr>
+    <tr>
+      <td>Lookback 21, Target 20%</td>
+      <td>21</td>
+      <td>0.20</td>
+      <td>False</td>
+      <td>0.90</td>
+      <td>1.03</td>
+      <td>18.11%</td>
+      <td>-26.46%</td>
+      <td>185.93%</td>
+      <td>0.95</td>
+      <td>0.96</td>
+      <td>0.11</td>
+      <td>2011-08-01</td>
+      <td>2026-06-12</td>
+      <td>0.96</td>
+      <td>0.153223</td>
+      <td>1.19</td>
+      <td>0.219944</td>
+      <td>0.95</td>
+      <td>0.171118</td>
+    </tr>
+  </tbody>
+</table></section><section><h2>Dual Momentum</h2><p>Top 10 candidates ranked by stability-adjusted subperiod Sharpe.</p><table class="dataframe results">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Candidate</th>
+      <th>Lookback Days</th>
+      <th>Baseline</th>
+      <th>Robust Score</th>
+      <th>Full Sharpe</th>
+      <th>Full CAGR</th>
+      <th>Full Max Drawdown</th>
+      <th>Full Annual Turnover</th>
+      <th>Worst Fold Sharpe</th>
+      <th>Median Fold Sharpe</th>
+      <th>Fold Sharpe Std</th>
+      <th>Evaluation Start</th>
+      <th>Evaluation End</th>
+      <th>Fold 1 Sharpe</th>
+      <th>Fold 1 CAGR</th>
+      <th>Fold 2 Sharpe</th>
+      <th>Fold 2 CAGR</th>
+      <th>Fold 3 Sharpe</th>
+      <th>Fold 3 CAGR</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Lookback 252</td>
+      <td>252</td>
+      <td>False</td>
+      <td>0.84</td>
+      <td>0.83</td>
+      <td>14.79%</td>
+      <td>-33.51%</td>
+      <td>620.93%</td>
+      <td>0.45</td>
+      <td>0.97</td>
+      <td>0.25</td>
+      <td>2012-02-01</td>
+      <td>2026-06-12</td>
+      <td>0.45</td>
+      <td>0.056810</td>
+      <td>0.99</td>
+      <td>0.197875</td>
+      <td>0.97</td>
+      <td>0.194869</td>
+    </tr>
+    <tr>
+      <td>Lookback 63</td>
+      <td>63</td>
+      <td>False</td>
+      <td>0.71</td>
+      <td>0.73</td>
+      <td>12.15%</td>
+      <td>-26.74%</td>
+      <td>1123.26%</td>
+      <td>0.36</td>
+      <td>0.84</td>
+      <td>0.25</td>
+      <td>2012-02-01</td>
+      <td>2026-06-12</td>
+      <td>0.36</td>
+      <td>0.041699</td>
+      <td>0.84</td>
+      <td>0.147906</td>
+      <td>0.92</td>
+      <td>0.179669</td>
+    </tr>
+    <tr>
+      <td>Lookback 126</td>
+      <td>126</td>
+      <td>True</td>
+      <td>0.56</td>
+      <td>0.64</td>
+      <td>10.84%</td>
+      <td>-44.86%</td>
+      <td>816.28%</td>
+      <td>0.45</td>
+      <td>0.65</td>
+      <td>0.17</td>
+      <td>2012-02-01</td>
+      <td>2026-06-12</td>
+      <td>0.65</td>
+      <td>0.086940</td>
+      <td>0.45</td>
+      <td>0.078338</td>
+      <td>0.87</td>
+      <td>0.161812</td>
+    </tr>
+    <tr>
+      <td>Lookback 189</td>
+      <td>189</td>
+      <td>False</td>
+      <td>0.31</td>
+      <td>0.64</td>
+      <td>10.28%</td>
+      <td>-32.52%</td>
+      <td>802.33%</td>
+      <td>0.13</td>
+      <td>0.52</td>
+      <td>0.42</td>
+      <td>2012-02-01</td>
+      <td>2026-06-12</td>
+      <td>0.13</td>
+      <td>0.008149</td>
+      <td>1.15</td>
+      <td>0.222815</td>
+      <td>0.52</td>
+      <td>0.087713</td>
+    </tr>
+  </tbody>
+</table></section>
+</main>
+</body>
+</html>

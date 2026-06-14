@@ -8,6 +8,7 @@ COMMANDS = [
     "run_walk_forward.py",
     "run_no_leverage_study.py",
     "run_qqq_voo_rotation_study.py",
+    "run_mag7_study.py",
     "generate_master_report.py",
 ]
 

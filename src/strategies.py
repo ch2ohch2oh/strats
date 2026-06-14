@@ -207,3 +207,81 @@ def dual_momentum_weights(
         desired.loc[date, selected] = 1.0
 
     return _apply_next_day(desired)
+
+
+def equal_weight_monthly_weights(
+    prices: pd.DataFrame,
+    assets: list[str],
+) -> pd.DataFrame:
+    """Rebalance an equal-weight basket at each month-end."""
+    month_ends = prices.groupby(prices.index.to_period("M")).tail(1).index
+    desired = _empty_weights(prices)
+    desired.loc[month_ends, :] = 0.0
+    desired.loc[month_ends, assets] = 1.0 / len(assets)
+    return _apply_next_day(desired)
+
+
+def mag7_composite_weights(
+    prices: pd.DataFrame,
+    mag7: list[str],
+    top_n: int = 3,
+    risk_managed: bool = False,
+    stock_sleeve: float = 1.0,
+    breadth_threshold: int = 4,
+) -> pd.DataFrame:
+    """Select Mag7 leaders using momentum, trend, and risk-adjusted momentum.
+
+    The risk-managed version requires broad Mag7 participation and a positive
+    QQQ trend. In a weak regime it holds the existing 50/50 QQQ/BIL fallback.
+    """
+    stock_prices = prices[mag7]
+    returns_63 = stock_prices.pct_change().rolling(63).std() * np.sqrt(252)
+    momentum_126 = stock_prices / stock_prices.shift(126) - 1.0
+    momentum_252 = stock_prices / stock_prices.shift(252) - 1.0
+    risk_adjusted = momentum_126 / returns_63
+
+    # Cross-sectional percentile ranks keep unlike score components comparable.
+    score = (
+        momentum_126.rank(axis=1, pct=True)
+        + momentum_252.rank(axis=1, pct=True)
+        + risk_adjusted.rank(axis=1, pct=True)
+    )
+    above_trend = stock_prices > stock_prices.rolling(200).mean()
+    breadth = above_trend.sum(axis=1)
+    qqq_trend = prices["QQQ"] > prices["QQQ"].rolling(200).mean()
+    month_ends = prices.groupby(prices.index.to_period("M")).tail(1).index
+    desired = _empty_weights(prices)
+
+    for date in month_ends:
+        healthy_regime = (
+            breadth.loc[date] >= breadth_threshold and qqq_trend.loc[date]
+        )
+        if risk_managed and not healthy_regime:
+            desired.loc[date, :] = 0.0
+            desired.loc[date, "QQQ"] = 0.5
+            desired.loc[date, "BIL"] = 0.5
+            continue
+
+        valid = (
+            score.loc[date].notna()
+            & above_trend.loc[date]
+            & (momentum_126.loc[date] > 0.0)
+        )
+        if valid.sum() < top_n:
+            if risk_managed:
+                desired.loc[date, :] = 0.0
+                desired.loc[date, "QQQ"] = 0.5
+                desired.loc[date, "BIL"] = 0.5
+            continue
+
+        desired.loc[date, :] = 0.0
+        selected = score.loc[date, valid].nlargest(top_n).index
+        if risk_managed:
+            inverse_vol = 1.0 / returns_63.loc[date, selected]
+            allocation = inverse_vol / inverse_vol.sum() * stock_sleeve
+        else:
+            allocation = pd.Series(stock_sleeve / top_n, index=selected)
+        desired.loc[date, selected] = allocation
+        desired.loc[date, "VOO"] = 1.0 - stock_sleeve
+
+    return _apply_next_day(desired)

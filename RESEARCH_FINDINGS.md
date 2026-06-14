@@ -126,3 +126,35 @@ Over the exact 2016-2026 comparison window:
 
 Because QQQ and VOO share broad US large-cap exposure, switching between them
 changes concentration more than it changes the underlying equity-market risk.
+
+## Dynamic Mag7 Leadership Follow-Up
+
+A stock-level Mag7 study was designed to be more sophisticated than an
+equal-weight MAGS-like basket. At each month-end it ranks AAPL, MSFT, AMZN,
+GOOGL, META, NVDA, and TSLA using 126-day momentum, 252-day momentum, and
+126-day return divided by 63-day volatility. Eligible stocks must have positive
+126-day momentum and trade above their 200-day moving average.
+
+The fixed risk-managed strategy selects the top three using inverse-volatility
+weights when at least four of seven stocks and QQQ are above trend. Otherwise,
+it holds 50% QQQ and 50% BIL. From 2016 through June 12, 2026:
+
+- Risk-managed top three: 33.56% CAGR, 26.24% volatility, 1.24 Sharpe, and
+  -34.80% maximum drawdown.
+- Diversified leadership with a 60% stock sleeve and 40% VOO: 25.70% CAGR,
+  21.07% volatility, 1.19 Sharpe, and -34.24% maximum drawdown.
+- Equal-weight Mag7: 34.99% CAGR, 28.70% volatility, 1.19 Sharpe, and -49.38%
+  maximum drawdown.
+- QQQ: 20.43% CAGR, 22.25% volatility, 0.95 Sharpe, and -35.12% maximum
+  drawdown.
+
+A 27-combination sensitivity grid showed that top-three and top-four variants
+generally retained Sharpe ratios above QQQ, with the top-three family averaging
+a 1.25 Sharpe. The fixed midpoint specification was retained rather than
+replacing it with the best in-sample parameters.
+
+These results are exploratory and materially biased. Applying today's Mag7
+membership throughout history selects known winners with hindsight, and the
+strategy was designed after observing a technology-led period. It may warrant
+paper trading or a future point-in-time constituent study, but it does not
+replace the 50% QQQ-floor trend ensemble as the most credible core strategy.

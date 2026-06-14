@@ -90,6 +90,17 @@ def save_master_report(
             "VOO Buy & Hold",
         ],
     )
+    mag7_table = _metrics_table(
+        output_dir / "mag7_study" / "fixed_2016_onward_results.csv",
+        [
+            "Mag7 Risk-Managed Top 3",
+            "Mag7 Diversified Leadership",
+            "Mag7 Composite Top 3",
+            "Mag7 Equal Weight",
+            "50% QQQ-Floor Trend Ensemble",
+            "QQQ Buy & Hold",
+        ],
+    )
     optimization_table = _optimization_summary(output_dir).to_html(index=False, border=0)
 
     report = f"""<!doctype html>
@@ -166,12 +177,25 @@ rotation changes concentration more than total equity risk.</p>
 {rotation_table}</section>
 <section><h2>QQQ / VOO Rotation Equity Curves</h2><img src="data:image/png;base64,{_image(output_dir / "qqq_voo_rotation" / "fixed_2016_onward_charts" / "equity_curves.png")}" alt="QQQ and VOO rotation equity curves"></section>
 
+<section><h2>Dynamic Mag7 Leadership Study: Exploratory</h2>
+<p class="warning"><strong>This is not a MAGS-like equal-weight strategy.</strong> It ranks individual
+Mag7 stocks by 6- and 12-month momentum plus risk-adjusted momentum, requires positive stock trends,
+selects the top three using inverse-volatility weights, and uses Mag7 breadth plus QQQ trend as a risk
+gate. However, applying today's Mag7 membership historically creates severe survivorship and selection
+bias, so the results are hypothesis-generating rather than investable evidence.</p>
+<p>The fixed midpoint specification materially outperformed QQQ historically and showed broadly positive
+parameter sensitivity, but it retained a roughly -35% drawdown and very high turnover. It is best viewed
+as a high-risk satellite concept. It does not replace the 50% QQQ-floor trend ensemble as the most
+credible core strategy.</p>{mag7_table}</section>
+<section><h2>Dynamic Mag7 Leadership Equity Curves</h2><img src="data:image/png;base64,{_image(output_dir / "mag7_study" / "fixed_2016_onward_charts" / "equity_curves.png")}" alt="Dynamic Mag7 leadership equity curves"></section>
+
 <section><h2>What Did Not Work</h2><ul>
 <li>Full-history volatility optimization looked attractive but underperformed its fixed baseline walk-forward.</li>
 <li>Dual momentum produced lower returns and unstable subperiod performance.</li>
 <li>Annual selection among QQQ-floor levels usually chose a 75% floor, raising return but allowing roughly -30% drawdowns.</li>
 <li>A 75% fixed floor approached QQQ's CAGR, but much of the desired downside protection disappeared.</li>
 <li>QQQ/VOO rotation reduced concentration risk but did not outperform the 50%-floor trend ensemble on Sharpe or drawdown.</li>
+<li>Mag7 leadership improved historical return and Sharpe, but did not deliver lower drawdown than the core trend ensemble.</li>
 </ul></section>
 
 <section><h2>Methodology and Limitations</h2><ul>
@@ -181,6 +205,7 @@ rotation changes concentration more than total equity risk.</p>
 <li>All strategies are long-only and unleveraged.</li>
 <li>Taxes, market impact, ETF survivorship, execution differences, and research-selection bias are excluded.</li>
 <li>US technology equities performed unusually strongly during much of the available history.</li>
+<li>The Mag7 study uses today's membership throughout history and therefore has severe survivorship and hindsight bias.</li>
 </ul></section>
 
 <section><h2>Supporting Artifacts</h2><ul>
@@ -189,6 +214,8 @@ rotation changes concentration more than total equity risk.</p>
 <li><a href="no_leverage_study/fixed_2016_onward_results.csv">No-leverage fixed results CSV</a></li>
 <li><a href="no_leverage_study/full_sample_results.csv">No-leverage full-sample results CSV</a></li>
 <li><a href="qqq_voo_rotation/fixed_2016_onward_results.csv">QQQ / VOO rotation results CSV</a></li>
+<li><a href="mag7_study/report.html">Dynamic Mag7 leadership detailed report</a></li>
+<li><a href="mag7_study/robustness_grid.csv">Dynamic Mag7 parameter stability grid</a></li>
 <li><a href="../RESEARCH_FINDINGS.md">Persisted research findings</a></li>
 </ul><p class="muted">Detailed HTML reports remain available for audit, but this master report is the
 primary research deliverable.</p></section>
