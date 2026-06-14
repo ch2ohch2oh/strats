@@ -143,7 +143,7 @@ strategy fully matched QQQ's return while preserving meaningful risk reduction.<
 <li>At each close, compare QQQ with its 150-, 200-, and 250-day simple moving averages.</li>
 <li>Start with a 50% minimum QQQ allocation.</li>
 <li>Add one-sixth of the portfolio to QQQ for each positive moving-average signal.</li>
-<li>Allocate the remainder to BIL.</li>
+<li>Allocate the remainder to BIL (iShares 1-3 Month Treasury Bond ETF).</li>
 <li>Apply the new allocation to the next trading day's return.</li>
 </ol>
 <p>This produces QQQ allocations of 50%, 66.7%, 83.3%, or 100%. It remains fully invested, long-only,

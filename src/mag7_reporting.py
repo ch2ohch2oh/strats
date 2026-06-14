@@ -46,7 +46,7 @@ history. That creates severe survivorship and selection bias. Results cannot be 
 <li>Only stocks above their 200-day average with positive 126-day returns are eligible.</li>
 <li>Select the top three. Risk-managed variants weight them by inverse volatility.</li>
 <li>The risk regime requires at least four of seven stocks above trend and QQQ above its 200-day average.</li>
-<li>In a weak regime, risk-managed variants hold 50% QQQ and 50% BIL. The diversified variant holds only a 60% stock-selection sleeve and 40% VOO in healthy regimes.</li>
+<li>In a weak regime, risk-managed variants hold 50% QQQ and 50% BIL (iShares 1-3 Month Treasury Bond ETF). The diversified variant holds only a 60% stock-selection sleeve and 40% VOO in healthy regimes.</li>
 <li>Signals calculated at the close take effect on the next trading day; costs are 0.02% of two-way turnover.</li>
 </ol></section>
 <section><h2>2016-Onward Result</h2><p>Highest fixed-period Sharpe: <strong>{best}</strong> at <strong>{best_sharpe:.2f}</strong>.</p>{fixed_table}</section>

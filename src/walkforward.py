@@ -96,6 +96,8 @@ def save_walk_forward_report(
         formatted["Training Full Sharpe"] = formatted["Training Full Sharpe"].map(lambda value: f"{value:.2f}")
         selection_sections.append(
             f"<section><h2>{html.escape(strategy)} Annual Selections</h2>"
+            f"<p><strong>Training Robust Score</strong> = stability-adjusted score (median fold Sharpe minus 0.5×std) on the training period. "
+            f"<strong>Training Full Sharpe</strong> = the candidate's full-period Sharpe within the training data.</p>"
             f"{formatted.to_html(index=False, border=0)}</section>"
         )
 

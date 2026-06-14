@@ -27,11 +27,23 @@ def save_no_leverage_report(
         "2016-2026 Fixed Variants": format_summary(fixed_oos_summary).to_html(border=0),
         "2016-2026 Walk-Forward Selection": format_summary(walk_forward_summary).to_html(border=0),
     }
-    selection_html = "".join(
-        f"<section><h2>{html.escape(strategy)} Annual Selections</h2>"
-        f"{selection.to_html(index=False, border=0)}</section>"
-        for strategy, selection in selections.items()
-    )
+    selection_parts = []
+    for strategy, selection in selections.items():
+        formatted = selection.copy()
+        for col in formatted.columns:
+            if "Robust Score" in col or "Full Sharpe" in col:
+                formatted[col] = formatted[col].map(lambda value: f"{value:.2f}")
+        selection_parts.append(
+            f"<section><h2>{html.escape(strategy)} Annual Selections</h2>"
+            f"<p>Each year, the candidate with the best robustness score (median fold Sharpe minus 0.5×std) from prior data is selected and frozen for the test year. "
+            f"<strong>Training Robust Score</strong> is that stability-adjusted score on the training period. "
+            f"<strong>Training Full Sharpe</strong> is the candidate's full-period Sharpe within the training data.</p>"
+            f"{formatted.to_html(index=False, border=0)}</section>"
+        )
+    selection_html = "".join(selection_parts)
+
+
+
     report = f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>No-Leverage Trend Study</title><style>
@@ -48,7 +60,7 @@ th{{background:#eef3fa;font-size:12px}}th:first-child,td:first-child{{text-align
 weakened drawdown protection.</p>
 <section><h2>Strategies Tested</h2>
 <p><strong>Partial trend:</strong> hold 100% QQQ above its 200-day SMA; below it, retain a fixed
-0%, 25%, 50%, or 75% QQQ allocation and place the remainder in BIL.</p>
+0%, 25%, 50%, or 75% QQQ allocation and place the remainder in BIL (iShares 1-3 Month Treasury Bond ETF).</p>
 <p><strong>Trend ensemble:</strong> combine the 150-, 200-, and 250-day SMA signals. QQQ exposure
 equals the positive-signal share, scaled above a fixed 0%, 25%, 50%, or 75% minimum; remainder goes to BIL.</p>
 </section>

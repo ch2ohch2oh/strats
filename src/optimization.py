@@ -83,7 +83,8 @@ def save_optimization_report(
     sections = []
     for strategy, ranking in rankings.items():
         display = ranking.head(10).copy()
-        for column in ["Full CAGR", "Full Max Drawdown", "Full Annual Turnover"]:
+        cagr_columns = [c for c in display.columns if c.startswith("Fold ") and c.endswith(" CAGR")]
+        for column in ["Full CAGR", "Full Max Drawdown", "Full Annual Turnover"] + cagr_columns:
             display[column] = display[column].map(lambda value: f"{value:.2%}")
         for column in [
             "Robust Score",

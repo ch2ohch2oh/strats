@@ -155,7 +155,7 @@ def save_html_report(
       <li>Monthly strategies use month-end signals on the first trading day of the next month.</li>
       <li>Transaction cost is 0.02% of two-way dollar turnover; leverage and shorting are not allowed.</li>
       <li>All portfolios are evaluated over the same period after required signal warm-up.</li>
-      <li>BIL is used as the short-term Treasury fallback and absolute-momentum hurdle.</li>
+      <li>BIL (iShares 1-3 Month Treasury Bond ETF) is used as the short-term Treasury fallback and absolute-momentum hurdle.</li>
       <li>Taxes, market impact, survivorship bias, and execution differences limit the conclusions.</li>
     </ul>
     <p class="note">Past performance does not indicate future results.</p>
