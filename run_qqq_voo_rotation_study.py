@@ -50,7 +50,7 @@ def main() -> None:
     for name, weight_function in STRATEGIES.items():
         weights = weight_function(prices)
         weights.loc[weights.index.year < 2016] = float("nan")
-        oos_raw[name] = run_portfolio(prices, weights)
+        oos_raw[name] = run_portfolio(prices, weights, name=name)
     oos_results = align_results(oos_raw)
     oos_summary = build_summary(oos_results)
     oos_summary.to_csv(output_dir / "fixed_2016_onward_results.csv")

@@ -155,9 +155,21 @@ replacing it with the best in-sample parameters.
 
 These results are exploratory and materially biased. Applying today's Mag7
 membership throughout history selects known winners with hindsight, and the
-strategy was designed after observing a technology-led period. It may warrant
-paper trading or a future point-in-time constituent study, but it does not
-replace the 50% QQQ-floor trend ensemble as the most credible core strategy.
+strategy was designed after observing a technology-led period.
+
+A follow-up dynamic-universe study confirmed the bias was severe. Re-running
+the same strategy with monthly market-cap reconstitution from a pool of ~32
+large-cap candidates eliminated the survivorship advantage. The dynamic results:
+
+- Dynamic Top7 Risk-Managed Top 3: 15.93% CAGR, 1.01 Sharpe, -33.31% DD.
+- Dynamic Top7 Equal Weight: 16.45% CAGR, 1.06 Sharpe, -33.17% DD.
+- 50% QQQ-Floor Trend Ensemble: 18.89% CAGR, 1.06 Sharpe, -25.52% DD.
+- QQQ Buy & Hold: 20.43% CAGR, 0.95 Sharpe, -35.12% DD.
+
+No dynamic variant beat the 50% floor trend ensemble on risk-adjusted return.
+The static Mag7 study's ~33.56% CAGR was an artifact — survivorship bias
+accounted for roughly 18 percentage points of CAGR. The master report now
+presents the dynamic universe results as the honest version.
 
 ## Volatility-Adjusted Trend Ensemble Follow-Up
 

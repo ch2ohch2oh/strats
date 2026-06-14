@@ -327,3 +327,112 @@ def mag7_composite_weights(
         desired.loc[date, "VOO"] = 1.0 - stock_sleeve
 
     return _apply_next_day(desired)
+
+
+def dynamic_equal_weight_weights(
+    prices: pd.DataFrame,
+    market_caps: pd.DataFrame,
+    candidates: list[str],
+    top_n: int = 7,
+) -> pd.DataFrame:
+    """Equal-weight the top N stocks by market cap at each month-end."""
+    month_ends = prices.groupby(prices.index.to_period("M")).tail(1).index
+    desired = _empty_weights(prices)
+    for date in month_ends:
+        if date not in market_caps.index:
+            continue
+        valid_caps = market_caps.loc[date].dropna()
+        if len(valid_caps) < top_n:
+            universe = valid_caps.nlargest(len(valid_caps)).index.tolist()
+        else:
+            universe = valid_caps.nlargest(top_n).index.tolist()
+        universe = [t for t in universe if t in prices.columns]
+        if not universe:
+            continue
+        desired.loc[date, :] = 0.0
+        desired.loc[date, universe] = 1.0 / len(universe)
+    return _apply_next_day(desired)
+
+
+def dynamic_mag7_composite_weights(
+    prices: pd.DataFrame,
+    market_caps: pd.DataFrame,
+    candidates: list[str],
+    top_n: int = 7,
+    max_stocks: int = 3,
+    risk_managed: bool = False,
+    stock_sleeve: float = 1.0,
+    breadth_threshold: int = 4,
+) -> pd.DataFrame:
+    """Select Mag7-like leaders using a dynamic top-N-by-market-cap universe.
+
+    At each month-end, the universe is the *top_n* stocks by market cap from
+    *candidates*.  The same momentum / trend / risk-adjusted ranking from
+    ``mag7_composite_weights`` then selects *max_stocks* from that universe.
+    This eliminates the fixed-universe survivorship bias that affects the
+    static Mag7 study.
+    """
+    month_ends = prices.groupby(prices.index.to_period("M")).tail(1).index
+    desired = _empty_weights(prices)
+
+    for date in month_ends:
+        if date not in market_caps.index:
+            continue
+        valid_caps = market_caps.loc[date].dropna()
+        if len(valid_caps) < max(2, top_n):
+            continue
+        universe = valid_caps.nlargest(top_n).index.tolist()
+        universe = [t for t in universe if t in prices.columns]
+
+        if len(universe) < max(2, max_stocks):
+            if risk_managed:
+                desired.loc[date, :] = 0.0
+                desired.loc[date, "QQQ"] = 0.5
+                desired.loc[date, "BIL"] = 0.5
+            continue
+
+        stock_prices = prices[universe]
+        returns_63 = stock_prices.pct_change().rolling(63).std() * np.sqrt(252)
+        momentum_126 = stock_prices / stock_prices.shift(126) - 1.0
+        momentum_252 = stock_prices / stock_prices.shift(252) - 1.0
+        risk_adjusted = momentum_126 / returns_63
+        above_trend = stock_prices > stock_prices.rolling(200).mean()
+
+        score = (
+            momentum_126.rank(axis=1, pct=True)
+            + momentum_252.rank(axis=1, pct=True)
+            + risk_adjusted.rank(axis=1, pct=True)
+        )
+        breadth = above_trend.sum(axis=1)
+        qqq_trend = prices["QQQ"] > prices["QQQ"].rolling(200).mean()
+        healthy_regime = breadth.loc[date] >= breadth_threshold and qqq_trend.loc[date]
+        if risk_managed and not healthy_regime:
+            desired.loc[date, :] = 0.0
+            desired.loc[date, "QQQ"] = 0.5
+            desired.loc[date, "BIL"] = 0.5
+            continue
+
+        valid = (
+            score.loc[date].notna()
+            & above_trend.loc[date]
+            & (momentum_126.loc[date] > 0.0)
+        )
+        valid_count = valid.sum()
+        if valid_count < max_stocks:
+            if risk_managed:
+                desired.loc[date, :] = 0.0
+                desired.loc[date, "QQQ"] = 0.5
+                desired.loc[date, "BIL"] = 0.5
+            continue
+
+        desired.loc[date, :] = 0.0
+        selected = score.loc[date, valid].nlargest(max_stocks).index
+        if risk_managed:
+            inverse_vol = 1.0 / returns_63.loc[date, selected]
+            allocation = inverse_vol / inverse_vol.sum() * stock_sleeve
+        else:
+            allocation = pd.Series(stock_sleeve / max_stocks, index=selected)
+        desired.loc[date, selected] = allocation
+        desired.loc[date, "VOO"] = 1.0 - stock_sleeve
+
+    return _apply_next_day(desired)

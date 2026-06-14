@@ -13,6 +13,7 @@ def walk_forward_strategy(
     prices: pd.DataFrame,
     candidates,
     first_test_year: int = 2016,
+    name: str = "Walk-Forward Strategy",
 ) -> tuple[BacktestResult, pd.DataFrame]:
     """Select parameters on prior data, then hold them fixed for each test year."""
     candidate_weights = {
@@ -42,7 +43,7 @@ def walk_forward_strategy(
             }
         )
 
-    return run_portfolio(prices, selected_weights), pd.DataFrame(selections)
+    return run_portfolio(prices, selected_weights, name=name), pd.DataFrame(selections)
 
 
 def build_walk_forward_results(
@@ -55,13 +56,19 @@ def build_walk_forward_results(
     results = {}
     selections = {}
     for strategy, candidates in grids.items():
-        result, selection = walk_forward_strategy(prices, candidates, first_test_year)
+        result, selection = walk_forward_strategy(
+            prices, candidates, first_test_year, name=f"{strategy} Walk-Forward"
+        )
         results[f"{strategy} Walk-Forward"] = result
         selections[strategy] = selection
 
     for strategy, weight_function in baselines.items():
-        results[f"{strategy} Fixed Baseline"] = run_portfolio(prices, weight_function(prices))
-    results["QQQ Buy & Hold"] = run_portfolio(prices, benchmark_weights(prices))
+        results[f"{strategy} Fixed Baseline"] = run_portfolio(
+            prices, weight_function(prices), name=f"{strategy} Fixed Baseline"
+        )
+    results["QQQ Buy & Hold"] = run_portfolio(
+        prices, benchmark_weights(prices), name="QQQ Buy & Hold"
+    )
     return align_results(results), selections
 
 
