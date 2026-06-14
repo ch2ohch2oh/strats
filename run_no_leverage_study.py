@@ -14,11 +14,25 @@ from src.strategies import (
     partial_trend_weights,
     trend_ensemble_weights,
     trend_following_weights,
+    vol_adjusted_trend_ensemble_weights,
 )
 from src.walkforward import build_walk_forward_results, save_walk_forward_report
 
 
 TICKERS = ["QQQ", "VOO", "VGT", "BIL", "IAU", "TLT"]
+
+
+def _vol_adjusted_variants():
+    params = []
+    for max_floor in [0.50, 0.75, 1.0]:
+        for low_vol, high_vol in [(0.10, 0.35), (0.12, 0.40), (0.15, 0.45)]:
+            name = f"Vol-Adj Ensemble, {max_floor:.0%} max floor, {low_vol:.0%}/{high_vol:.0%} vol"
+            baseline = max_floor == 0.75 and low_vol == 0.12 and high_vol == 0.35
+            params.append(
+                (name, {"Max Floor": max_floor, "Low Vol": low_vol, "High Vol": high_vol, "Baseline": baseline},
+                 partial(vol_adjusted_trend_ensemble_weights, max_floor=max_floor, low_vol=low_vol, high_vol=high_vol))
+            )
+    return params
 
 
 def candidate_families():
@@ -39,6 +53,7 @@ def candidate_families():
             )
             for floor in [0.0, 0.25, 0.50, 0.75]
         ],
+        "Vol-Adjusted Trend Ensemble": _vol_adjusted_variants(),
     }
 
 
@@ -55,6 +70,16 @@ def main() -> None:
     for candidates in families.values():
         for name, _, weight_function in candidates:
             fixed_functions[name] = weight_function
+
+    vol_baseline = partial(
+        vol_adjusted_trend_ensemble_weights, max_floor=0.75, low_vol=0.12, high_vol=0.35
+    )
+    fixed_functions["Vol-Adj Ensemble, low vol 50% floor"] = partial(
+        vol_adjusted_trend_ensemble_weights, max_floor=0.50, low_vol=0.12, high_vol=0.35
+    )
+    fixed_functions["Vol-Adj Ensemble, high vol 75% floor"] = partial(
+        vol_adjusted_trend_ensemble_weights, max_floor=0.75, low_vol=0.15, high_vol=0.45
+    )
 
     fixed_results = align_results(
         {
@@ -79,6 +104,9 @@ def main() -> None:
     baselines = {
         "Partial Trend": trend_following_weights,
         "Trend Ensemble": trend_ensemble_weights,
+        "Vol-Adjusted Trend Ensemble": partial(
+            vol_adjusted_trend_ensemble_weights, max_floor=0.75, low_vol=0.12, high_vol=0.35
+        ),
     }
     walk_forward_results, selections = build_walk_forward_results(
         prices,

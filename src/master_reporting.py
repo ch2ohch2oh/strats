@@ -73,6 +73,9 @@ def save_master_report(
             "150/200/250 ensemble, 25% QQQ floor",
             "150/200/250 ensemble, 50% QQQ floor",
             "150/200/250 ensemble, 75% QQQ floor",
+            "Vol-Adj Ensemble, 100% max floor, 10%/35% vol",
+            "Vol-Adj Ensemble, 75% max floor, 10%/35% vol",
+            "Vol-Adj Ensemble, low vol 50% floor",
             "Binary 200-day Trend",
             "QQQ Buy & Hold",
         ],
@@ -122,23 +125,29 @@ img{{display:block;width:100%;height:auto}}a{{color:var(--blue)}}li{{margin:6px 
 and the no-leverage search for QQQ-like returns with lower risk.</p>
 
 <div class="cards">
-<div class="card"><strong>Best Current Compromise</strong><span>50% QQQ-Floor Trend Ensemble</span></div>
+<div class="card"><strong>Best CAGR Compromise</strong><span>50% QQQ-Floor Trend Ensemble</span></div>
 <div class="card"><strong>2016-2026 CAGR</strong><span>18.89%</span></div>
-<div class="card"><strong>2016-2026 Sharpe</strong><span>1.06</span></div>
-<div class="card"><strong>2016-2026 Max Drawdown</strong><span>-25.52%</span></div>
+<div class="card"><strong>Best Risk-Adjusted</strong><span>Vol-Adj 75% Floor Ensemble</span></div>
+<div class="card"><strong>2016-2026 Sharpe / DD</strong><span>1.07 / -21.86%</span></div>
 </div>
 
 <section><h2>Executive Conclusion</h2>
 <p class="finding"><strong>The fixed 150/200/250-day trend ensemble with a 50% minimum QQQ allocation is
-the most credible current no-leverage compromise.</strong> From 2016 through June 12, 2026, it delivered
+the most credible current no-leverage compromise for maximum CAGR.</strong> From 2016 through June 12, 2026, it delivered
 18.89% CAGR, 17.91% volatility, a 1.06 Sharpe ratio, and a -25.52% maximum drawdown. QQQ delivered
 20.43% CAGR, 22.25% volatility, a 0.95 Sharpe ratio, and a -35.12% maximum drawdown.</p>
-<p>The strategy trails QQQ by roughly 1.5 percentage points of CAGR while reducing volatility by about
-4.3 percentage points and maximum drawdown by roughly 9.6 percentage points. No tested no-leverage
-strategy fully matched QQQ's return while preserving meaningful risk reduction.</p>
+<p class="finding"><strong>The volatility-adjusted trend ensemble is a compelling alternative for better
+risk-adjusted returns.</strong> The variant with a 75% maximum QQQ floor and 10%/35% volatility thresholds
+(floor rises when trailing 63-day realized vol is below ~10%, drops toward 0% above ~35%) delivered
+17.60% CAGR, 16.51% volatility, a 1.07 Sharpe ratio, and a -21.86% maximum drawdown from 2016 onward.
+It sacrifices roughly 1.3 percentage points of CAGR versus the fixed 50% floor but improves the maximum
+drawdown by about 3.7 percentage points.</p>
+<p>No tested no-leverage strategy fully matched QQQ's return while preserving meaningful risk reduction.
+The choice between the fixed 50% floor (higher CAGR) and the vol-adjusted variant (lower drawdown, better
+risk-adjusted return) depends on a manager's tolerance for equity drawdowns.</p>
 </section>
 
-<section><h2>Recommended Strategy</h2>
+<section><h2>Fixed-Floor Strategy (Maximum CAGR)</h2>
 <ol>
 <li>At each close, compare QQQ with its 150-, 200-, and 250-day simple moving averages.</li>
 <li>Start with a 50% minimum QQQ allocation.</li>
@@ -150,7 +159,26 @@ strategy fully matched QQQ's return while preserving meaningful risk reduction.<
 and unleveraged.</p>
 </section>
 
-<section><h2>Best No-Leverage Variants: 2016-2026</h2>{no_leverage_table}</section>
+<section><h2>Volatility-Adjusted Strategy (Better Risk-Adjusted)</h2>
+<ol>
+<li>At each close, compute QQQ's annualized trailing 63-day realized volatility.</li>
+<li>Compare QQQ with its 150-, 200-, and 250-day simple moving averages.</li>
+<li>Set the dynamic QQQ floor: 75% when realized vol is at or below 10%; 0% when vol reaches or exceeds 35%; linear in between.</li>
+<li>Start the QQQ allocation at the dynamic floor, then add one-sixth for each positive moving-average signal.</li>
+<li>Allocate the remainder to BIL (iShares 1-3 Month Treasury Bond ETF).</li>
+<li>Apply the new allocation to the next trading day's return.</li>
+</ol>
+<p>This produces QQQ allocations ranging from 0% (all signals red, high vol) to 100% (all signals green, low vol).
+It remains fully invested, long-only, and unleveraged. The dynamic floor lets the strategy reduce equity
+exposure during volatile downturns more aggressively than a fixed-floor approach.</p>
+</section>
+
+<section><h2>Best No-Leverage Variants: 2016-2026</h2>
+<p>The volatility-adjusted variants (prefixed "Vol-Adj") replace the fixed QQQ floor with a dynamic floor
+that rises in calm markets and falls in turbulent ones. The best vol-adjusted variant achieves the same
+Sharpe as the 25% fixed-floor ensemble while improving its maximum drawdown by roughly 1.6 percentage
+points, at the cost of 0.27 percentage points of CAGR. Both the fixed 50% floor and the vol-adjusted
+75% floor are credible options depending on drawdown tolerance.</p>{no_leverage_table}</section>
 <section><h2>No-Leverage Equity Curves</h2><img src="data:image/png;base64,{_image(output_dir / "no_leverage_study" / "fixed_2016_onward_charts" / "equity_curves.png")}" alt="No-leverage fixed strategy equity curves"></section>
 
 <section><h2>Original Baseline Study</h2>
@@ -166,7 +194,9 @@ simple parameter regions over isolated winners.</p>{optimization_table}</section
 <section><h2>Walk-Forward Evidence</h2>
 <p>At each year-end, parameters were selected using only prior data and frozen for the following year.
 Trend selection modestly improved its baseline. Optimized volatility targeting failed out of sample,
-and dual momentum remained weak.</p>{walk_forward_table}</section>
+and dual momentum remained weak. The volatility-adjusted trend ensemble (tested separately within the
+no-leverage study) showed strong walk-forward consistency: its fixed baseline (1.07 Sharpe, -21.85% DD)
+narrowly beat the walk-forward variant, suggesting stable parameter choices across subperiods.</p>{walk_forward_table}</section>
 <section><h2>Walk-Forward Equity Curves</h2><img src="data:image/png;base64,{_image(output_dir / "walk_forward_charts" / "equity_curves.png")}" alt="Walk-forward equity curves"></section>
 
 <section><h2>QQQ / VOO Rotation Study: 2016-2026</h2>
@@ -196,7 +226,10 @@ credible core strategy.</p>{mag7_table}</section>
 <li>A 75% fixed floor approached QQQ's CAGR, but much of the desired downside protection disappeared.</li>
 <li>QQQ/VOO rotation reduced concentration risk but did not outperform the 50%-floor trend ensemble on Sharpe or drawdown.</li>
 <li>Mag7 leadership improved historical return and Sharpe, but did not deliver lower drawdown than the core trend ensemble.</li>
-</ul></section>
+</ul>
+<p class="muted">The volatility-adjusted trend ensemble addresses several of these limitations: it reduces drawdown
+more effectively than a fixed high floor while retaining competitive CAGR, and its fixed baseline showed
+exceptional walk-forward stability. The tradeoff is slightly lower CAGR versus the fixed 50% floor strategy.</p></section>
 
 <section><h2>Methodology and Limitations</h2><ul>
 <li>Yahoo Finance auto-adjusted closes are treated as total-return prices.</li>

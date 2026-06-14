@@ -77,6 +77,48 @@ def trend_ensemble_weights(
     return _apply_next_day(desired)
 
 
+def _dynamic_floor(realized_vol: pd.Series, low_vol: float = 0.12, high_vol: float = 0.35,
+                   max_floor: float = 0.75, min_floor: float = 0.0) -> pd.Series:
+    out = pd.Series(min_floor, index=realized_vol.index)
+    low = realized_vol <= low_vol
+    mid = (realized_vol > low_vol) & (realized_vol < high_vol)
+    out[low] = max_floor
+    fraction = (realized_vol[mid] - low_vol) / (high_vol - low_vol)
+    out[mid] = max_floor - fraction * (max_floor - min_floor)
+    return out
+
+
+def vol_adjusted_trend_ensemble_weights(
+    prices: pd.DataFrame,
+    sma_days: tuple[int, ...] = (150, 200, 250),
+    vol_lookback_days: int = 63,
+    low_vol: float = 0.12,
+    high_vol: float = 0.35,
+    max_floor: float = 0.75,
+    min_floor: float = 0.0,
+) -> pd.DataFrame:
+    """Trend ensemble with a volatility-adjusted QQQ floor.
+
+    In calm markets (low vol) the minimum QQQ allocation rises near max_floor.
+    In turbulent markets (high vol) it drops toward min_floor, letting the trend
+    ensemble reduce equity exposure further than a fixed floor would allow.
+    """
+    signals = pd.DataFrame(
+        {days: prices["QQQ"] > prices["QQQ"].rolling(days).mean() for days in sma_days}
+    )
+    valid = prices["QQQ"].rolling(max(sma_days)).mean().notna()
+    realized_vol = prices["QQQ"].pct_change().rolling(vol_lookback_days).std() * np.sqrt(252)
+    signal_weight = signals.mean(axis=1)
+    floor = _dynamic_floor(realized_vol, low_vol, high_vol, max_floor, min_floor)
+    qqq_weight = floor + (1.0 - floor) * signal_weight
+
+    desired = _empty_weights(prices)
+    desired.loc[valid, :] = 0.0
+    desired.loc[valid, "QQQ"] = qqq_weight.loc[valid]
+    desired.loc[valid, "BIL"] = 1.0 - qqq_weight.loc[valid]
+    return _apply_next_day(desired)
+
+
 def qqq_voo_relative_momentum_weights(
     prices: pd.DataFrame,
     lookback_days: int = 126,

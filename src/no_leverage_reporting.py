@@ -63,6 +63,11 @@ weakened drawdown protection.</p>
 0%, 25%, 50%, or 75% QQQ allocation and place the remainder in BIL (iShares 1-3 Month Treasury Bond ETF).</p>
 <p><strong>Trend ensemble:</strong> combine the 150-, 200-, and 250-day SMA signals. QQQ exposure
 equals the positive-signal share, scaled above a fixed 0%, 25%, 50%, or 75% minimum; remainder goes to BIL.</p>
+<p><strong>Volatility-adjusted trend ensemble:</strong> uses the same 150/200/250-day signal
+combination but replaces the fixed QQQ floor with a dynamic floor. When QQQ's trailing 63-day realized
+volatility is low (below ~12%), the minimum QQQ allocation rises toward 75%. When vol is high (above
+~35%), the floor drops toward 0%, allowing deeper equity reduction. This lets the strategy stay more
+invested in calm markets and cut deeper during turmoil.</p>
 </section>
 <section><h2>Full-Sample Fixed Variants</h2>{tables["Full-Sample Fixed Variants"]}</section>
 <section><h2>Full-Sample Equity Curves</h2><img src="data:image/png;base64,{_image(full_chart)}"></section>

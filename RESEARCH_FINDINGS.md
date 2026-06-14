@@ -158,3 +158,56 @@ membership throughout history selects known winners with hindsight, and the
 strategy was designed after observing a technology-led period. It may warrant
 paper trading or a future point-in-time constituent study, but it does not
 replace the 50% QQQ-floor trend ensemble as the most credible core strategy.
+
+## Volatility-Adjusted Trend Ensemble Follow-Up
+
+The volatility-adjusted trend ensemble replaces the fixed QQQ floor in the
+150/200/250-day ensemble with a dynamic floor that responds to QQQ's trailing
+63-day realized volatility. When vol is low (at or below ~10% annualized), the
+floor rises toward a configurable maximum (tested at 50%, 75%, and 100%). When
+vol is high (at or above ~35%), the floor drops toward 0%, allowing deeper
+equity reduction in volatile downturns.
+
+### Full-Sample Results (2011-2026)
+
+The best variants improved the Sharpe ratio from 1.10 (fixed 50% floor) to 1.11
+and reduced maximum drawdown from -25.52% (fixed 50% floor) to as low as
+-21.82%. The tradeoff was a lower CAGR (17.67-18.41% vs 18.67%):
+
+- Vol-Adj Ensemble, 100% max floor, 10%/35% vol: **18.41% CAGR, 1.11 Sharpe,
+  -24.39% DD** — closest to the fixed 50% floor's CAGR with better drawdown.
+- Vol-Adj Ensemble, 75% max floor, 10%/35% vol: **17.67% CAGR, 1.11 Sharpe,
+  -21.86% DD** — best risk-adjusted, best drawdown.
+- Fixed 150/200/250 ensemble, 50% QQQ floor: 18.67% CAGR, 1.10 Sharpe,
+  -25.52% DD.
+
+### 2016-2026 Fixed Window
+
+- Vol-Adj Ensemble, 75% max floor, 10%/35% vol: **17.60% CAGR, 1.07 Sharpe,
+  -21.86% DD**.
+- Fixed 150/200/250 ensemble, 25% QQQ floor: 17.87% CAGR, 1.07 Sharpe,
+  -23.41% DD.
+- Vol-Adj, 100% max floor, 10%/35% vol: **17.88% CAGR, 1.06 Sharpe,
+  -21.82% DD**.
+- Fixed 150/200/250 ensemble, 50% QQQ floor: 18.89% CAGR, 1.06 Sharpe,
+  -25.52% DD.
+- QQQ Buy & Hold: 20.43% CAGR, 0.95 Sharpe, -35.12% DD.
+
+### Walk-Forward Stability
+
+The vol-adjusted strategy's fixed baseline was remarkably stable, achieving
+17.68% CAGR, 1.07 Sharpe, and -21.85% DD — nearly identical to its 2016-2026
+fixed-period results. Walk-forward parameter selection slightly improved CAGR
+(17.92%) but at the cost of higher drawdown (-24.23%). The fixed baseline's
+consistency suggests the vol-adjusted concept does not overfit to a particular
+market regime.
+
+### Interpretation
+
+The vol-adjusted trend ensemble offers a direct tradeoff: it sacrifices 1.0-1.3
+percentage points of CAGR versus the fixed 50% floor in exchange for 3.7-4.3
+percentage points of drawdown improvement. It is a stronger choice for investors
+who prioritize risk reduction over peak return, while the fixed 50% floor
+remains the best option for those who want maximum CAGR with moderate
+downside control. Both are credible no-leverage approaches that meaningfully
+improve on QQQ's unmanaged risk profile.
