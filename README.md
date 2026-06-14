@@ -25,7 +25,8 @@ uv sync
 uv run python run_all_studies.py
 ```
 
-The primary deliverable is the consolidated `output/master_report.html`.
+The primary deliverable is the consolidated [`master_report.html`](https://ch2ohch2oh.github.io/strats/master_report.html).
+All reports are published via [GitHub Pages](https://ch2ohch2oh.github.io/strats/).
 Use `uv run python run_backtest.py --refresh` first when price data should be
 redownloaded.
 
